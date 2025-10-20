@@ -1,10 +1,7 @@
 package swf.army.mil.blog.comment;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import swf.army.mil.blog.post.Post;
 
 import java.time.LocalDateTime;
@@ -14,6 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class Comment {
 
     @Id
@@ -24,15 +22,13 @@ public class Comment {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime timestamp;
-
-    @Column(nullable = false)
-    private String content;
 
     @Column(nullable = false)
     private String author;
 
-
+    @Column(nullable = false)
+    private String content;
 }
 

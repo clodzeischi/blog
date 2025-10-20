@@ -1,10 +1,7 @@
 package swf.army.mil.blog.post;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import swf.army.mil.blog.comment.Comment;
 
@@ -16,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class Post {
 
     @Id
@@ -23,6 +21,7 @@ public class Post {
     private Long id;
 
     @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private LocalDateTime timestamp;
 
     @Column(nullable = false)
@@ -35,7 +34,8 @@ public class Post {
     private String content;
 
     @Column(nullable = false)
-    private Integer likes;
+    @Builder.Default
+    private Integer likes = 0;
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Comment> comments;
