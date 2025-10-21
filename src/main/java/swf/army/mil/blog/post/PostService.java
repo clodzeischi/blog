@@ -19,7 +19,8 @@ public class PostService {
     }
 
     public Post findByID(Long id) {
-        return postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Post not found"));
+        return postRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
     }
 
     public List<Post> findAll() {

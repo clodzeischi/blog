@@ -1,5 +1,6 @@
 package swf.army.mil.blog.comment;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import swf.army.mil.blog.post.Post;
@@ -20,6 +21,7 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "post_id", nullable = false)
+    @JsonIgnore
     private Post post;
 
     @Column(nullable = false, updatable = false)

@@ -27,9 +27,8 @@ public class PostServiceTest {
 
     @Test
     void shouldSaveNewPost() {
-        Post testPost = new Post(1L, LocalDateTime.of(
-                2025, 10, 20, 15, 20),
-                "Author", "Subject", "Content", 5, null);
+        Post testPost = new Post(1L, null, "Author",
+                "Subject", "Content", 5, null);
 
         when(postService.save(testPost)).thenReturn(testPost);
 
@@ -42,11 +41,10 @@ public class PostServiceTest {
     void shouldFindPostByID() {
         Long myID = 1L;
 
-        Post testPost = new Post(myID, LocalDateTime.of(
-                2025, 10, 20, 15, 20),
-                "Author", "Subject", "Content", 5, null);
+        Post testPost = new Post(myID, null, "Author",
+                "Subject", "Content", 5, null);
 
-        when(postRepository.findById(1L)).thenReturn(Optional.of(testPost));
+        when(postRepository.findById(myID)).thenReturn(Optional.of(testPost));
 
         Post actualPost = postService.findByID(myID);
         verify(postRepository, times(1)).findById(any(Long.class));
@@ -71,11 +69,11 @@ public class PostServiceTest {
     @Test
     void shouldFindAllPosts() {
         List<Post> testPosts = List.of(new Post(
-            1L, LocalDateTime.of(2020, 10, 10, 10, 10),
-                "Author", "Subject 1", "Content 1", 5, null
+            1L, null, "Author", "Subject 1",
+                "Content 1", 5, null
         ), new Post(
-                2L, LocalDateTime.of(2020, 10, 10, 10, 11),
-                "Author", "Subject 2", "Content 2", 6, null
+                2L, null,  "Author", "Subject 2",
+                "Content 2", 6, null
         ));
 
         when(postRepository.findAll()).thenReturn(testPosts);
@@ -89,9 +87,8 @@ public class PostServiceTest {
     void shouldDeletePostByID() {
         Long myID = 1L;
 
-        Post testPost = new Post(myID, LocalDateTime.of(
-                2025, 10, 20, 15, 20),
-                "Author", "Subject", "Content", 5, null);
+        Post testPost = new Post(myID, null, "Author",
+                "Subject", "Content", 5, null);
 
         when(postRepository.findById(myID)).thenReturn(Optional.of(testPost));
 
@@ -116,9 +113,8 @@ public class PostServiceTest {
     void shouldEditPostByID() {
         Long myID = 1L;
 
-        Post post = new Post(myID, LocalDateTime.of(
-                2025, 10, 20, 15, 20),
-                "Author", "Subject", "Content", 5, null);
+        Post post = new Post(myID, null, "Author",
+                "Subject", "Content", 5, null);
 
         String updatedContent = "Updated content";
 
@@ -153,9 +149,8 @@ public class PostServiceTest {
         Long myID = 1L;
         int likes = 10;
 
-        Post post = new Post(myID, LocalDateTime.of(
-                2025, 10, 20, 15, 20),
-                "Author", "Subject", "Content", likes, null);
+        Post post = new Post(myID, null, "Author",
+                "Subject", "Content", likes, null);
 
         when(postRepository.findById(myID)).thenReturn(Optional.of(post));
         when(postRepository.save(any(Post.class)))
@@ -187,9 +182,8 @@ public class PostServiceTest {
         Long myID = 1L;
         int likes = 10;
 
-        Post post = new Post(myID, LocalDateTime.of(
-                2025, 10, 20, 15, 20),
-                "Author", "Subject", "Content", likes, null);
+        Post post = new Post(myID, null, "Author",
+                "Subject", "Content", likes, null);
 
         when(postRepository.findById(myID)).thenReturn(Optional.of(post));
         when(postRepository.save(any(Post.class)))

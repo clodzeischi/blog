@@ -37,6 +37,6 @@ public class Post {
     @Builder.Default
     private Integer likes = 0;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post_id", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Comment> comments;
 }
