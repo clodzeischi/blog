@@ -49,12 +49,4 @@ public class PostService {
         p.setLikes(p.getLikes() + 1);
         return postRepository.save(p);
     }
-
-    @Transactional
-    public Post dislike(Long id) {
-        Post p = findByID(id);
-
-        p.setLikes(p.getLikes() - 1);
-        return postRepository.save(p);
-    }
 }

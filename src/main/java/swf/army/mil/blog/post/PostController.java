@@ -41,11 +41,6 @@ public class PostController {
         return ResponseEntity.ok(postService.like(id));
     }
 
-    @PostMapping("/{id}/dislike")
-    public ResponseEntity<Post> dislike(@PathVariable Long id) {
-        return ResponseEntity.ok(postService.dislike(id));
-    }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         postService.delete(id);

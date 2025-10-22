@@ -176,37 +176,4 @@ public class PostServiceTest {
         verify(postRepository, never()).save(any());
         assertEquals("Post not found", exception.getMessage());
     }
-
-    @Test
-    void shouldDisikeByID() {
-        Long myID = 1L;
-        int likes = 10;
-
-        Post post = new Post(myID, null, "Author",
-                "Subject", "Content", likes, null);
-
-        when(postRepository.findById(myID)).thenReturn(Optional.of(post));
-        when(postRepository.save(any(Post.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
-
-        Post result = postService.dislike(myID);
-
-        verify(postRepository, times(1)).save(any(Post.class));
-        assertEquals(likes - 1, result.getLikes());
-    }
-
-    @Test
-    void shouldNotDislikeIfDoesntExist() {
-        Long missingID = 1L;
-
-        when(postRepository.findById(any(Long.class))).thenReturn(Optional.empty());
-
-        EntityNotFoundException exception = assertThrows(
-                EntityNotFoundException.class, () -> {
-                    postService.dislike(missingID);
-                });
-
-        verify(postRepository, never()).save(any());
-        assertEquals("Post not found", exception.getMessage());
-    }
 }

@@ -211,38 +211,4 @@ public class PostControllerTest {
 
         verify(postService).like(missingID);
     }
-
-    @Test
-    void shouldDislikePostByID() throws Exception {
-        Post testPost = Post.builder()
-                .id(1L)
-                .author("author")
-                .subject("subject")
-                .comments(List.of())
-                .likes(5)
-                .build();
-
-        when(postService.dislike(1L)).thenReturn(testPost);
-
-        mockMvc.perform(post(apiEndPoint + "/1/dislike"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.likes").value(5));
-
-        verify(postService).dislike(1L);
-    }
-
-    @Test
-    void shouldNotDislikeIfDoesntExist() throws Exception {
-        Long missingID = 1L;
-
-        // Simulate service throwing EntityNotFoundException
-        when(postService.dislike(missingID))
-                .thenThrow(new EntityNotFoundException("Post not found"));
-
-        mockMvc.perform(post(apiEndPoint + "/1/dislike"))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("Post not found"));
-
-        verify(postService).dislike(missingID);
-    }
 }
