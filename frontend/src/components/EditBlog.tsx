@@ -1,15 +1,25 @@
 import {Button, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader} from "reactstrap";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 type editBlogProps = {
-    text: string,
     modal: boolean,
-    toggle: () => void
+    toggle: () => void,
+    initialText: string,
+    onSubmit: (content: string) => void
 }
 
-export const EditBlog = ({text, modal, toggle} : editBlogProps) => {
+export const EditBlog = ({modal, toggle, initialText, onSubmit} : editBlogProps) => {
 
-    const [formText, setFormText] = useState(text);
+    const [content, setContent] = useState(initialText);
+
+    useEffect(() => {
+        if (modal) setContent(initialText)
+    }, [modal, initialText]);
+
+    const submit = () => {
+        onSubmit(content);
+        toggle();
+    }
 
     return (
         <Modal isOpen={modal} toggle={toggle}>
@@ -17,12 +27,12 @@ export const EditBlog = ({text, modal, toggle} : editBlogProps) => {
             <ModalBody>
                 <FormGroup>
                     <Label for="amount">Author</Label>
-                    <Input type="text" id="text" value={formText}
-                           onChange={e => setFormText(e.target.value)} />
+                    <Input type="text" id="text" value={content}
+                           onChange={e => setContent(e.target.value)} />
                 </FormGroup>
             </ModalBody>
             <ModalFooter>
-                <Button color="primary" onClick={toggle}>
+                <Button color="primary" onClick={submit}>
                     Confirm
                 </Button>{' '}
                 <Button color="secondary" onClick={toggle}>

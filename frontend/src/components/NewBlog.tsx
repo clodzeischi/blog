@@ -3,17 +3,26 @@ import {useState} from "react";
 
 type newBlogProps = {
     modal: boolean,
-    toggle: () => void
+    toggle: () => void,
+    onSubmit: (post: {author: string, subject: string, content: string}) => void
 }
 
-export const NewBlog = ({modal, toggle} : newBlogProps) => {
+export const NewBlog = ({modal, toggle, onSubmit} : newBlogProps) => {
 
     const [author, setAuthor] = useState('');
     const [subject, setSubject] = useState('');
-    const [text, setText] = useState('');
+    const [content, setText] = useState('');
+
+    const submit = () => {
+        onSubmit({author, subject, content});
+        setAuthor('');
+        setSubject('');
+        setText('');
+        toggle();
+    }
 
     return (
-        <Modal isOpen={modal} toggle={toggle}>
+        <Modal isOpen={modal} toggle={toggle} role='dialog'>
             <ModalHeader toggle={toggle}>New post</ModalHeader>
             <ModalBody>
                 <FormGroup>
@@ -29,12 +38,12 @@ export const NewBlog = ({modal, toggle} : newBlogProps) => {
                 </FormGroup>
                 <FormGroup>
                     <Label for="comment">Text</Label>
-                    <Input type="text" id="comment" value={text}
+                    <Input type="text" id="comment" value={content}
                        onChange={e => setText(e.target.value)} />
                 </FormGroup>
             </ModalBody>
             <ModalFooter>
-                <Button color="primary" onClick={toggle}>
+                <Button color="primary" onClick={submit}>
                     Confirm
                 </Button>{' '}
                 <Button color="secondary" onClick={toggle}>
