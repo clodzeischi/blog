@@ -60,9 +60,9 @@ export const PostDetails = () => {
             />
             <Container className='flex-column'>
                 <div>
-                    <Button className='m-3' href='/'>Back</Button>
-                    <Button className='m-3' onClick={() => {setEditOpen(true)}}>Edit</Button>
-                    <Button className='m-3 btn-danger' onClick={handleDelete}>Delete</Button>
+                    <Button className='m-3' color='secondary' href='/'>Back</Button>
+                    <Button className='m-3' color='primary' onClick={() => {setEditOpen(true)}}>Edit</Button>
+                    <Button className='m-3' color='danger' onClick={handleDelete}>Delete</Button>
                 </div>
 
                 <h2>{post?.subject}</h2>
@@ -77,7 +77,7 @@ export const PostDetails = () => {
                 <Comments postID={Number(id)}/>
             </Container>
 
-            <EditBlog modal={editOpen} initialText={post?.content}
+            <EditBlog modal={editOpen} initialText={post?.content ?? ''}
                       toggle={() => {setEditOpen(!editOpen)}}
                         onSubmit={submitEdit}/>
         </>

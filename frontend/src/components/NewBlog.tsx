@@ -22,23 +22,22 @@ export const NewBlog = ({modal, toggle, onSubmit} : newBlogProps) => {
     }
 
     return (
-        <Modal isOpen={modal} toggle={toggle} role='dialog'>
-            <ModalHeader toggle={toggle}>New post</ModalHeader>
+        <Modal isOpen={modal} toggle={toggle} role='dialog' aria-label='New blog post'>
+            <ModalHeader toggle={toggle}>New blog post</ModalHeader>
             <ModalBody>
                 <FormGroup>
                     <Label for="amount">Author</Label>
-                    <Input type="text" id="text" value={author}
+                    <Input type="text" id="text" value={author} aria-label='input-author'
                        onChange={e => setAuthor(e.target.value)} />
                 </FormGroup>
                 <FormGroup>
-                    <Label for="comment">Subject</Label>
-                    <Input type="text" id="comment" value={subject}
-
+                    <Label for="subject">Subject</Label>
+                    <Input type="text" id="subject" value={subject} aria-label='input-subject'
                        onChange={e => setSubject(e.target.value)} />
                 </FormGroup>
                 <FormGroup>
-                    <Label for="comment">Text</Label>
-                    <Input type="text" id="comment" value={content}
+                    <Label for="content">Text</Label>
+                    <Input type="text" id="content" value={content} aria-label='input-content'
                        onChange={e => setText(e.target.value)} />
                 </FormGroup>
             </ModalBody>

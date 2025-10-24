@@ -5,7 +5,7 @@ import {Link} from "react-router-dom";
 export const BlogCard = (props: BlogpostProps) => {
     return (
         <Link to={`/posts/${props.id}`}>
-            <Card className="my-2">
+            <Card className="my-2" role='banner'>
                 <CardImg
                     alt="Card image cap"
                     src="/bk.jpg"

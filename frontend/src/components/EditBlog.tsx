@@ -1,14 +1,14 @@
 import {Button, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader} from "reactstrap";
 import {useEffect, useState} from "react";
 
-type editBlogProps = {
+type EditBlogProps = {
     modal: boolean,
     toggle: () => void,
     initialText: string,
     onSubmit: (content: string) => void
 }
 
-export const EditBlog = ({modal, toggle, initialText, onSubmit} : editBlogProps) => {
+export const EditBlog = ({modal, toggle, initialText, onSubmit} : EditBlogProps) => {
 
     const [content, setContent] = useState(initialText);
 
