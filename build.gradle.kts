@@ -1,9 +1,9 @@
 plugins {
+	id("org.springframework.boot") version "3.3.5"
+	id("io.spring.dependency-management") version "1.1.7"
 	kotlin("jvm") version "2.2.21"
 	kotlin("plugin.spring") version "2.2.21"
 	kotlin("plugin.jpa") version "2.2.21"
-	id("org.springframework.boot") version "3.3.5"
-	id("io.spring.dependency-management") version "1.1.7"
 }
 
 group = "com.personal"
@@ -43,10 +43,17 @@ dependencies {
 }
 
 kotlin {
-	compilerOptions {
-		freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
-	}
+    jvmToolchain(21)
+
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+        freeCompilerArgs.addAll(
+            "-Xjsr305=strict",
+            "-Xannotation-default-target=param-property"
+        )
+    }
 }
+
 
 allOpen {
 	annotation("jakarta.persistence.Entity")
@@ -56,4 +63,10 @@ allOpen {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach { 
+	compilerOptions { 
+		jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21) 
+	} 
 }
