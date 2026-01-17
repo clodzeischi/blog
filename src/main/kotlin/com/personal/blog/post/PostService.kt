@@ -5,12 +5,21 @@ import org.springframework.stereotype.Service
 @Service
 class PostService(val repo: PostRepository) {
 
-    fun create(title: String, content: String): Post =
-        repo.save(Post(title = title, content = content))
+    fun create(post: CreatePostRequest): Post =
+        repo.save(Post(
+            title = post.title,
+            content = post.content))
 
     fun retrieve(): List<Post> = repo.findAll()
 
-    fun update(post: Post): Post {
+    fun retrieve(id: Long): Post {
+        val myPost = repo.findById(id)
+            .orElseThrow { NoSuchElementException("Post not found") }
+
+        return myPost
+    }
+
+    fun update(post: UpdatePostRequest): Post {
         val existingPost = repo.findById(post.id)
             .orElseThrow { NoSuchElementException("Post not found") }
 

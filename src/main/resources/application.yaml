@@ -1,11 +1,14 @@
 spring:
   application:
     name: blog
+  config:
+    import: optional:file:.env[.properties]
+
 
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: ${APP_DB_OUTSIDE}
+    username: ${APP_DB_USERNAME}
+    password: ${APP_DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -25,7 +28,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${KEYCLOAK_ISSUER_URI}
+          issuer-uri: ${KC_ISSUER_URI}
 
 server:
-  port: 8080
+  port: 8081

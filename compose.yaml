@@ -1,6 +1,6 @@
 services:
   app-db:
-    image: postgres:18
+    image: postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -11,7 +11,7 @@ services:
       - app_postgres_data:/var/lib/postgresql
 
   kc-db:
-    image: postgres:18
+    image: postgres
     environment:
       POSTGRES_USER: ${KC_DB_USERNAME}
       POSTGRES_PASSWORD: ${KC_DB_PASSWORD}

@@ -34,6 +34,9 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
+	implementation("org.flywaydb:flyway-core")
+	implementation("org.flywaydb:flyway-database-postgresql")
+
 	runtimeOnly("org.postgresql:postgresql")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -54,7 +57,6 @@ kotlin {
     }
 }
 
-
 allOpen {
 	annotation("jakarta.persistence.Entity")
 	annotation("jakarta.persistence.MappedSuperclass")
@@ -65,8 +67,17 @@ tasks.withType<Test> {
 	useJUnitPlatform()
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach { 
-	compilerOptions { 
-		jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21) 
-	} 
+tasks.withType<Test> {
+	val env = loadEnv()
+	environment(env)
 }
+
+
+fun loadEnv(): Map<String, String> =
+	file(".env").readLines()
+		.filter { it.contains("=") }
+		.map {
+			val (key, value) = it.split("=", limit = 2)
+			key to value
+		}.toMap()
+

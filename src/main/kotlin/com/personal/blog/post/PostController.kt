@@ -20,7 +20,7 @@ class PostController(val service: PostService) {
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     fun post(@RequestBody req: CreatePostRequest): PostDTO {
-        val newPost = service.create(req.title, req.content)
+        val newPost = service.create(req)
         return PostDTO(
             newPost.id, 
             newPost.title, 
@@ -39,8 +39,24 @@ class PostController(val service: PostService) {
             it.updated)
     }
 
+    @GetMapping("/{id}")
+    fun getByID(@PathVariable id: Long): ResponseEntity<PostDTO> {
+        return try {
+            val myPost = service.retrieve(id)
+            val response = PostDTO(
+                myPost.id,
+                myPost.title,
+                myPost.content,
+                myPost.created,
+                myPost.updated)
+            ResponseEntity.ok().body(response)
+        } catch (e: NoSuchElementException) {
+            ResponseEntity.notFound().build()
+        }
+    }
+
     @PatchMapping
-    fun patch(@RequestBody req: Post): ResponseEntity<PostDTO> {
+    fun patch(@RequestBody req: UpdatePostRequest): ResponseEntity<PostDTO> {
         return try {
             val updatedPost = service.update(req)
             val response = PostDTO(
@@ -72,4 +88,12 @@ data class PostDTO(
     val content: String,
     val created: Instant,
     val updated: Instant)
-data class CreatePostRequest(val title: String, val content: String)
+
+data class CreatePostRequest(
+    val title: String,
+    val content: String)
+
+data class UpdatePostRequest(
+    val id: Long,
+    val title: String,
+    val content: String)
