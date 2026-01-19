@@ -1,5 +1,6 @@
 package com.personal.blog.post
 
+import com.personal.blog.comment.CommentService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
@@ -9,14 +10,16 @@ import java.util.*
 class PostServiceTest {
 
     private val repo: PostRepository = mock()
-    private val service = PostService(repo)
+    private val commentService: CommentService = mock()
+    private val service = PostService(repo, commentService)
+
+    val req = CreatePostRequest("Hello", "World")
+    val reqUpdate = UpdatePostRequest(1L, "New", "Content")
+    val testPost = Post(id = 1L, title = "Hello", content = "World")
 
     @Test
     fun `should save and return new post`() {
-        val req = CreatePostRequest("Hello", "World")
-        val saved = Post(id = 1L, title = "Hello", content = "World")
-
-        whenever(repo.save(any())).thenReturn(saved)
+        whenever(repo.save(any())).thenReturn(testPost)
 
         val result = service.create(req)
 
@@ -29,24 +32,19 @@ class PostServiceTest {
 
     @Test
     fun `should return all posts`() {
-        val posts = listOf(
-            Post(1L, "A", "B"),
-            Post(2L, "C", "D")
-        )
+        val posts = listOf(testPost)
 
         whenever(repo.findAll()).thenReturn(posts)
 
         val result = service.retrieve()
 
-        assertEquals(2, result.size)
+        assertEquals(1, result.size)
         verify(repo).findAll()
     }
 
     @Test
     fun `should return post by id`() {
-        val post = Post(1L, "Hello", "World")
-
-        whenever(repo.findById(1L)).thenReturn(Optional.of(post))
+        whenever(repo.findById(1L)).thenReturn(Optional.of(testPost))
 
         val result = service.retrieve(1L)
 
@@ -67,29 +65,24 @@ class PostServiceTest {
 
     @Test
     fun `should modify and save existing post`() {
-        val existing = Post(1L, "Old", "Post")
-        val req = UpdatePostRequest(id = 1L, title = "New", content = "Content")
+        whenever(repo.findById(any())).thenReturn(Optional.of(testPost))
+        whenever(repo.save(any())).thenReturn(testPost)
 
-        whenever(repo.findById(any())).thenReturn(Optional.of(existing))
-        whenever(repo.save(existing)).thenReturn(existing)
-
-        val result = service.update(req)
+        val result = service.update(reqUpdate)
 
         assertEquals("New", result.title)
         assertEquals("Content", result.content)
 
         verify(repo).findById(any())
-        verify(repo).save(existing)
+        verify(repo).save(testPost)
     }
 
     @Test
     fun `should throw if not found on update`() {
-        val req = UpdatePostRequest(id = 1L, title = "X", content = "Y")
-
         whenever(repo.findById(any())).thenReturn(Optional.empty())
 
         assertThrows(NoSuchElementException::class.java) {
-            service.update(req)
+            service.update(reqUpdate)
         }
 
         verify(repo).findById(any())
@@ -98,14 +91,12 @@ class PostServiceTest {
 
     @Test
     fun `should delete post`() {
-        val existing = Post(1L, "Hello", "World")
-
-        whenever(repo.findById(any())).thenReturn(Optional.of(existing))
+        whenever(repo.findById(any())).thenReturn(Optional.of(testPost))
 
         service.delete(1L)
 
         verify(repo).findById(any())
-        verify(repo).delete(existing)
+        verify(repo).delete(testPost)
     }
 
     @Test

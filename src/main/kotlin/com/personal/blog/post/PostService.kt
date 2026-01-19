@@ -1,9 +1,10 @@
 package com.personal.blog.post
 
+import com.personal.blog.comment.CommentService
 import org.springframework.stereotype.Service
 
 @Service
-class PostService(val repo: PostRepository) {
+class PostService(val repo: PostRepository, val commentService: CommentService) {
 
     fun create(post: CreatePostRequest): Post =
         repo.save(Post(
@@ -33,6 +34,7 @@ class PostService(val repo: PostRepository) {
         val existingPost = repo.findById(id)
             .orElseThrow { NoSuchElementException("Post not found") }
 
+        commentService.deleteByPostID(id)
         repo.delete(existingPost)
     }
 }

@@ -1,5 +1,6 @@
-package com.personal.blog.post
+package com.personal.blog.comment
 
+import com.personal.blog.post.Post
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
@@ -11,66 +12,67 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.Instant
 
-@WebMvcTest(PostController::class)
+@WebMvcTest(CommentController::class)
 @AutoConfigureMockMvc(addFilters = false)
 @TestPropertySource(properties = [
     "spring.security.oauth2.resourceserver.jwt.issuer-uri=http://fake"
 ])
-class PostControllerTest(@Autowired private val mockMvc: MockMvc) {
+class CommentControllerTest(@Autowired private val mockMvc: MockMvc) {
 
     @MockBean
-    lateinit var service: PostService
+    lateinit var service: CommentService
 
-    val endpoint = "/api/posts"
+    val endpoint = "/api/comments"
 
     val json_req = """
-        {"title": "Hello", "content": "World"}
+        {"post": {"id": "1"}, "text": "World"}
     """
 
-    val responsePost = Post(1L, "Hello", "World")
+    val testPost = Post(1L, "Hello", "World")
+    val responseComment = Comment(1L, testPost, "Hello", Instant.now())
 
     @Test
-    fun `should return empty list of posts`() {
-        whenever(service.retrieve()).thenReturn(emptyList<Post>())
+    fun `should return empty list of comments`() {
+        whenever(service.retrieveByPostID(any())).thenReturn(emptyList())
 
-        mockMvc.perform(get(endpoint))
+        mockMvc.perform(get("$endpoint/bypost/1"))
             .andExpect(status().isOk())
             .andExpect(content().json("[]"))
     }
 
     @Test
     fun `should return a list of two`() {
-        whenever(service.retrieve()).thenReturn(listOf<Post>(
-            Post(1, "hello", "world", Instant.now(), Instant.now()),
-            Post(2, "fu", "bar", Instant.now(), Instant.now())
+        whenever(service.retrieveByPostID(any())).thenReturn(listOf(
+            Comment(1, testPost, "foo"),
+            Comment(2, testPost, "bar")
         ))
 
-        mockMvc.perform(get(endpoint))
+        mockMvc.perform(get("$endpoint/bypost/1"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.length()").value(2))
     }
 
     @Test
-    fun `should find post by ID`() {
-        whenever(service.retrieve(any())).thenReturn(responsePost)
+    fun `should find comment by ID`() {
+        whenever(service.retrieveByID(any())).thenReturn(responseComment)
 
         mockMvc.perform(get("$endpoint/1"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.title").value("Hello"))
+            .andExpect(jsonPath("$.text").value("Hello"))
     }
 
     @Test
     fun `should not return if not found`() {
-        whenever(service.retrieve(any())).thenThrow(NoSuchElementException())
+        whenever(service.retrieveByID(any())).thenThrow(NoSuchElementException())
 
         mockMvc.perform(get("$endpoint/1"))
             .andExpect(status().isNotFound)
@@ -78,7 +80,7 @@ class PostControllerTest(@Autowired private val mockMvc: MockMvc) {
 
     @Test
     fun `should create a post`() {
-        whenever(service.create(any())).thenReturn(responsePost)
+        whenever(service.create(any())).thenReturn(responseComment)
 
         mockMvc.perform(
             post(endpoint)
@@ -86,33 +88,7 @@ class PostControllerTest(@Autowired private val mockMvc: MockMvc) {
                 .content(json_req))
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.id").exists())
-            .andExpect(jsonPath("$.title").value("Hello"))
-            .andExpect(jsonPath("$.content").value("World"))
-    }
-
-    @Test
-    fun `should not edit post if not found`() {
-        whenever(service.update(any())).thenThrow(NoSuchElementException())
-
-        mockMvc.perform(
-            patch(endpoint)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json_req))
-            .andExpect(status().isNotFound)
-    }
-
-    @Test
-    fun `should edit post`() {
-        whenever(service.update(any())).thenReturn(responsePost)
-
-        mockMvc.perform(
-            patch(endpoint)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json_req))
-            .andExpect(status().isAccepted)
-            .andExpect(jsonPath("$.id").exists())
-            .andExpect(jsonPath("$.title").value("Hello"))
-            .andExpect(jsonPath("$.content").value("World"))
+            .andExpect(jsonPath("$.text").value("Hello"))
     }
 
     @Test
@@ -120,7 +96,7 @@ class PostControllerTest(@Autowired private val mockMvc: MockMvc) {
         whenever(service.delete(any())).thenThrow(NoSuchElementException())
 
         mockMvc.perform(
-            delete("$endpoint/1")
+            MockMvcRequestBuilders.delete("$endpoint/1")
         )
             .andExpect(status().isNotFound)
     }
@@ -128,10 +104,20 @@ class PostControllerTest(@Autowired private val mockMvc: MockMvc) {
     @Test
     fun `should delete post`() {
         mockMvc.perform(
-            delete("$endpoint/1")
+            MockMvcRequestBuilders.delete("$endpoint/1")
         )
             .andExpect(status().isNoContent)
 
         verify(service).delete(any())
+    }
+
+    @Test
+    fun `should delete all comments by post ID`() {
+        mockMvc.perform(
+            delete("$endpoint/bypost/1")
+        )
+            .andExpect(status().isNoContent)
+
+        verify(service).deleteByPostID(any())
     }
 }
